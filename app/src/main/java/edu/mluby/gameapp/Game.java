@@ -13,7 +13,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class Game extends AppCompatActivity implements SensorEventListener {
 
     String Name;
     TextView tvScore, tvRound;
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     int counterNorth = 0;
     int counterSouth = 0;
-    int counterWest = 0;
     int counterEast = 0;
+    int counterWest = 0;
 
     TextView tvx, tvy, tvz, tvNorth, tvSouth, tvWest, tvEast;
     private SensorManager mSensorManager;
@@ -50,36 +50,38 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.game_activity);
 
-        btnNorth = findViewById(R.id.yellowRing);
-        btnSouth = findViewById(R.id.greenRing);
-        btnWest = findViewById(R.id.redRing);
-        btnEast = findViewById(R.id.blueRing);
+        btnEast = findViewById(R.id.btnEast);
+        btnWest = findViewById(R.id.btnWest);
+        btnNorth = findViewById(R.id.btnNorth);
+        btnSouth = findViewById(R.id.btnSouth);
 
-        tvx = findViewById(R.id.tvX);
-        tvy = findViewById(R.id.tvY);
-        tvz = findViewById(R.id.tvZ);
+        tvx = findViewById(R.id.tvX3);
+        tvy = findViewById(R.id.tvY3);
+        tvz = findViewById(R.id.tvZ3);
+
 
         mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        increase = getIntent().getIntExtra("increase", 0);
-        score = getIntent().getIntExtra("score", 0);
-        roundNo = getIntent().getIntExtra("round", 1);
+
         sequence = getIntent().getIntArrayExtra("sequence");
 
-        tvRound = findViewById(R.id.tvRound);
+        roundNo = getIntent().getIntExtra("round", 1);
+        score = getIntent().getIntExtra("score", 0);
+        increase = getIntent().getIntExtra("increase", 0);
 
         tvScore = findViewById(R.id.tvScore);
+        tvRound = findViewById(R.id.tvRound);
 
         tvRound.setText(String.valueOf(roundNo));
-
         tvScore.setText(String.valueOf(score));
     }
 
     protected void onResume() {
         super.onResume();
+
         mSensorManager.registerListener(this, mSensor,
                 SensorManager.SENSOR_DELAY_NORMAL);
     }
@@ -101,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         tvz.setText(String.valueOf(z));
 
         if ((x > NORTH_MOVE_FORWARD && z > 0) && (highestNorth == false)) {
-            highestNorth = true;
+            highLimitNorth = true;
         }
         if ((x < NORTH_MOVE_BACKWARD && z > 0) && (highestNorth == true)) {
             counterNorth++;
@@ -199,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             highestWest = true;
         }
         if (y > WEST_MOVE_BACKWARD && highestWest == true) {
+
             counterWest++;
             tvWest.setText(String.valueOf(counterWest));
             highestWest = false;
@@ -252,19 +255,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         switch (view.getId())
         {
-            case(R.id.yellowRing) :
+            case(R.id.btnNorth) :
                 number = 1;
                 Name ="North";
                 break;
-            case(R.id.blueRing) :
+            case(R.id.btnWest) :
                 number = 2;
                 Name ="West";
                 break;
-            case(R.id.greenRing) :
+            case(R.id.btnSouth) :
                 number = 3;
                 Name ="South";
                 break;
-            case(R.id.redRing) :
+            case(R.id.btnEast) :
                 number = 4;
                 Name ="East";
                 break;
@@ -282,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 {
                     increase = increase + 2;
                     roundNo++;
-                    Intent returnToMain = new Intent(MainActivity.this, Game.class);
+                    Intent returnToMain = new Intent(GameActivity.this, MainActivity.class);
                     returnToMain.putExtra("score", score);
                     returnToMain.putExtra("round", roundNo);
                     returnToMain.putExtra("increase", increase);
